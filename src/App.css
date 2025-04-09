@@ -1,3 +1,4 @@
+/* Theme variables and color scheme */
 :root {
     --background-color: rgba(255, 255, 255, 0.9);
     --text-color: #2c3e50;
@@ -14,6 +15,7 @@
     --glass-shadow: rgba(31, 38, 135, 0.15);
 }
 
+/* Dark theme color overrides */
 :root.dark {
     --background-color: rgba(26, 26, 26, 0.9);
     --text-color: #ecf0f1;
@@ -26,6 +28,7 @@
     --accent-gradient: linear-gradient(135deg, #FF6B6B, #FF8E53);
 }
 
+/* Base body styles with dynamic background */
 body {
     margin: 0;
     padding: 0;
@@ -38,6 +41,7 @@ body {
     overflow-x: hidden;
 }
 
+/* Background image with parallax effect */
 body::before {
     content: '';
     position: fixed;

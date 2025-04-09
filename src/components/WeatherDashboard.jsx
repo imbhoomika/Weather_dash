@@ -4,6 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaSync, FaCloud, FaSun, FaCloudRain, FaSnowflake, FaCloudShowersHeavy, FaWind } from 'react-icons/fa';
 import './WeatherDashboard.css';
 
+// API key from environment variables
+const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
+
 const getWeatherIcon = (weatherCode) => {
     // Weather codes from OpenWeather API
     const code = Math.floor(weatherCode / 100);
@@ -26,10 +29,12 @@ const getWeatherIcon = (weatherCode) => {
     }
 };
 
+// WeatherDashboard component for displaying weather information
 const WeatherDashboard = () => {
+    // State management for weather data and UI
+    const [city, setCity] = useState('');
     const [weather, setWeather] = useState(null);
     const [forecast, setForecast] = useState(null);
-    const [city, setCity] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [recentSearches, setRecentSearches] = useState(() => {
@@ -37,31 +42,26 @@ const WeatherDashboard = () => {
         return saved ? JSON.parse(saved) : [];
     });
 
-    const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
-
-    const addToRecentSearches = (cityName) => {
-        setRecentSearches(prev => {
-            const newSearches = [cityName, ...prev.filter(city => city !== cityName)].slice(0, 5);
-            localStorage.setItem('recentSearches', JSON.stringify(newSearches));
-            return newSearches;
-        });
-    };
-
-    const fetchWeather = async (cityName) => {
-        if (!cityName) return;
+    // Function to fetch weather data from OpenWeather API
+    const fetchWeather = async (searchCity) => {
+        if (!searchCity) return;
 
         setLoading(true);
         setError('');
 
         try {
             const [weatherResponse, forecastResponse] = await Promise.all([
-                axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${API_KEY}&units=metric`),
-                axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${API_KEY}&units=metric`)
+                axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${searchCity}&appid=${API_KEY}&units=metric`),
+                axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${searchCity}&appid=${API_KEY}&units=metric`)
             ]);
 
             setWeather(weatherResponse.data);
             setForecast(forecastResponse.data);
-            addToRecentSearches(cityName);
+
+            // Update recent searches
+            if (!recentSearches.includes(searchCity)) {
+                setRecentSearches(prev => [searchCity, ...prev.filter(city => city !== searchCity).slice(0, 5)]);
+            }
         } catch (err) {
             setError('City not found. Please try again.');
         } finally {
@@ -69,9 +69,12 @@ const WeatherDashboard = () => {
         }
     };
 
+    // Handle form submission for weather search
     const handleSubmit = (e) => {
         e.preventDefault();
-        fetchWeather(city);
+        if (city.trim()) {
+            fetchWeather(city);
+        }
     };
 
     const handleRecentSearch = (cityName) => {
@@ -85,6 +88,7 @@ const WeatherDashboard = () => {
         }
     };
 
+    // Render weather information with glass morphism UI
     return (
         <motion.div
             className="weather-dashboard"
@@ -103,6 +107,7 @@ const WeatherDashboard = () => {
                 <button type="submit" className="search-button">Search</button>
             </form>
 
+            {/* Display recent searches */}
             {recentSearches.length > 0 && (
                 <motion.div
                     className="recent-searches"
@@ -127,6 +132,7 @@ const WeatherDashboard = () => {
                 </motion.div>
             )}
 
+            {/* Loading and error states */}
             {loading && (
                 <motion.div
                     className="loading"
@@ -148,52 +154,51 @@ const WeatherDashboard = () => {
                 </motion.div>
             )}
 
-            <AnimatePresence>
-                {weather && (
-                    <motion.div
-                        className="weather-info"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.3 }}
-                    >
-                        <div className="weather-header">
-                            <h2>{weather.name}, {weather.sys.country}</h2>
-                            <motion.button
-                                className="refresh-button"
-                                onClick={handleRefresh}
-                                whileHover={{ rotate: 180 }}
-                                transition={{ duration: 0.5 }}
-                            >
-                                <FaSync />
-                            </motion.button>
-                        </div>
-                        <div className="weather-icon-container">
-                            {getWeatherIcon(weather.weather[0].id)}
-                        </div>
-                        <motion.div
-                            className="temperature"
-                            initial={{ scale: 0.5 }}
-                            animate={{ scale: 1 }}
-                            transition={{ type: "spring", stiffness: 200 }}
+            {/* Weather information display */}
+            {weather && !loading && (
+                <motion.div
+                    className="weather-info"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <div className="weather-header">
+                        <h2>{weather.name}, {weather.sys.country}</h2>
+                        <motion.button
+                            className="refresh-button"
+                            onClick={handleRefresh}
+                            whileHover={{ rotate: 180 }}
+                            transition={{ duration: 0.5 }}
                         >
-                            {Math.round(weather.main.temp)}°C
-                        </motion.div>
-                        <div className="weather-description">
-                            {weather.weather[0].description}
-                        </div>
-                        <div className="weather-details">
-                            <div className="detail-item">
-                                <FaWind className="detail-icon" />
-                                <span>Wind: {weather.wind.speed} m/s</span>
-                            </div>
-                            <div className="detail-item">
-                                <span>Humidity: {weather.main.humidity}%</span>
-                            </div>
-                        </div>
+                            <FaSync />
+                        </motion.button>
+                    </div>
+                    <div className="weather-icon-container">
+                        {getWeatherIcon(weather.weather[0].id)}
+                    </div>
+                    <motion.div
+                        className="temperature"
+                        initial={{ scale: 0.5 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 200 }}
+                    >
+                        {Math.round(weather.main.temp)}°C
                     </motion.div>
-                )}
-            </AnimatePresence>
+                    <div className="weather-description">
+                        {weather.weather[0].description}
+                    </div>
+                    <div className="weather-details">
+                        <div className="detail-item">
+                            <FaWind className="detail-icon" />
+                            <span>Wind: {weather.wind.speed} m/s</span>
+                        </div>
+                        <div className="detail-item">
+                            <span>Humidity: {weather.main.humidity}%</span>
+                        </div>
+                    </div>
+                </motion.div>
+            )}
 
             <AnimatePresence>
                 {forecast && (

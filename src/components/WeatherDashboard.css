@@ -1,3 +1,4 @@
+/* Main container with glass morphism effect */
 .weather-dashboard {
     max-width: 1200px;
     width: 100%;
@@ -13,12 +14,14 @@
     z-index: 1;
 }
 
+/* Search form with glass effect input and gradient button */
 .search-form {
     display: flex;
     gap: 1rem;
     margin-bottom: 2rem;
 }
 
+/* Glassmorphism effect for input fields */
 .search-input {
     flex: 1;
     padding: 1rem;
@@ -139,6 +142,7 @@
     backdrop-filter: blur(5px);
 }
 
+/* Weather information display with enhanced visual hierarchy */
 .weather-info {
     text-align: center;
     color: var(--text-color);
@@ -187,6 +191,7 @@
     height: 1.5rem;
 }
 
+/* Gradient text effect for temperature display */
 .temperature {
     font-size: 4rem;
     font-weight: 700;
