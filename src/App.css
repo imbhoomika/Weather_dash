@@ -1,0 +1,149 @@
+:root {
+    --background-color: rgba(255, 255, 255, 0.9);
+    --text-color: #2c3e50;
+    --primary-color: #3498db;
+    --primary-color-dark: #2980b9;
+    --card-background: rgba(255, 255, 255, 0.95);
+    --gradient-light: linear-gradient(135deg, #00c6fb 0%, #005bea 100%);
+    --gradient-dark: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    --accent-color: #e74c3c;
+    --accent-gradient: linear-gradient(135deg, #FF6B6B, #FF8E53);
+    --secondary-color: #2ecc71;
+    --glass-bg: rgba(255, 255, 255, 0.15);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-shadow: rgba(31, 38, 135, 0.15);
+}
+
+:root.dark {
+    --background-color: rgba(26, 26, 26, 0.9);
+    --text-color: #ecf0f1;
+    --primary-color: #3498db;
+    --primary-color-dark: #2980b9;
+    --card-background: rgba(40, 40, 40, 0.95);
+    --gradient-light: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    --gradient-dark: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    --accent-color: #e74c3c;
+    --accent-gradient: linear-gradient(135deg, #FF6B6B, #FF8E53);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: var(--gradient-light);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/landscape-background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.85;
+    z-index: -1;
+    transition: opacity 0.3s ease;
+    animation: subtle-zoom 30s infinite alternate;
+}
+
+@keyframes subtle-zoom {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(1.1);
+    }
+}
+
+:root.dark body::before {
+    opacity: 0.7;
+    filter: brightness(0.65) saturate(1.2);
+}
+
+.app {
+    min-height: 100vh;
+    padding: 2rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .app {
+        padding: 1rem;
+    }
+}
+
+#root {
+    max-width: 100%;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 1rem;
+    text-align: center;
+    background: var(--background-color);
+    transition: background-color 0.3s ease;
+    overflow-x: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+/* Large screens (1200px and up) */
+@media (min-width: 1200px) {
+    #root {
+        padding: 2rem;
+    }
+}
+
+/* Medium screens (768px to 1199px) */
+@media (max-width: 1199px) {
+    #root {
+        padding: 1.5rem;
+    }
+}
+
+/* Small screens (576px to 767px) */
+@media (max-width: 767px) {
+    #root {
+        padding: 1rem;
+    }
+}
+
+/* Extra small screens (575px and below) */
+@media (max-width: 575px) {
+    #root {
+        padding: 0.5rem;
+    }
+}
+
+/* Update the glass morphism effects to complement the new background */
+.weather-dashboard,
+.weather-info,
+.forecast-item,
+.search-input,
+.recent-searches {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+}
+
+:root.dark .weather-dashboard,
+:root.dark .weather-info,
+:root.dark .forecast-item,
+:root.dark .search-input,
+:root.dark .recent-searches {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
